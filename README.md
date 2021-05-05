@@ -47,6 +47,32 @@ object. This is a custom class which recieves each facet and
 a list of the original facet's positions.
 
 
+## Applications
+
+Every expensive and short-ranged application can use this
+framework to gather pieces of the original layout and work
+and these pieces, utilizing the facet caching for better
+performance. 
+
+The seed layer can be an original layout layer which means
+the original layer is entirely deconstructed and can be
+regenerated again from the information stored in the facets.
+
+The facets can be used as a basis for additional compression 
+or pattern detection by decomposing them further into primitives 
+such as straight lines etc.
+
+Finally, the framework works on hierarchical as well as
+flat layouts, so the application does not need to care
+about hierarchy. It can consider the layout to be made
+from single-polygon islands with a specific neighborhood.
+
+As the input polygons are merged and normalized (i.e. cut
+lines removed, orientation normalized etc.), the application also does
+not need to care about this preprocessing step typically required
+for layout-analysis applications.
+
+
 ## Modules, classes
 
 The central class is the "Separator" class:
