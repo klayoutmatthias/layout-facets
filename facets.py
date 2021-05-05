@@ -19,6 +19,12 @@ except ImportError:
 
 
 def hash_of_region(region):
+
+  """
+  Helper function to compute the hash value of a region 
+  (should be part of KLayout API)
+  """
+
   h = 0
   for p in region.each():
     h = hash((h, p.hash()))
@@ -26,12 +32,28 @@ def hash_of_region(region):
 
 
 def compare_region(region1, region2):
+
+  """
+  Helper function to compare two regions for equality
+  (should also be part of KLayout API)
+  """
+
   p1 = set([ p for p in region1.each() ])
   p2 = set([ p for p in region2.each() ])
   return p1 == p2
 
 
 class Facet(object):
+
+  """
+  An representing a single facet
+
+  Attributes are:
+    * seed: the seed polygon
+    * mask: the seed polygon oversized by the halo
+    * side_regions: one Region object per side layer containing the clipped side layer polygons
+    * result: a generic attribute by which the operator can attach results for the integrator
+  """
 
   def __init__(self, mask, seed, side_regions):
     
@@ -74,7 +96,30 @@ class Facet(object):
 
 class Separator(object):
 
+  """
+  The central class of the facets framework
+  """
+
   def __init__(self, layout, seed_layer, cell = None, merge = True, side_layers = [], halo = 0):
+
+    """
+    Constructor
+
+    Creates a facet representation from the given layout.
+
+    "cell" is the top cell to start with. If not given, the exisiting top cell is used
+    (which must be unique then).
+
+    "seed_layer": a KLayout layer index (NOT the GDS number) for the layer from which
+    to take the seeds.
+
+    "side_layers": an array of layer indexes (NOT the GDS numbers) for the side layers.
+
+    "halo": the halo distance in database units of the layout.
+
+    "merge" indicates if the polygons on the seed layer are merged before being used
+    as seeds (default: yes).
+    """
 
     self.facets = {}
 
@@ -106,21 +151,41 @@ class Separator(object):
 
   def process(self, operator):
 
+    """
+    Performs the processing step
+    """
+
     for f in self.facets.keys():
       operator.do(f)
 
   def integrate(self, integrator):
     
+    """
+    Performs the integration step
+    """
+
     for f in self.facets.keys():
       integrator.integrate(f, self.facets[f])
 
 
 class Operator(object):
+
+  """
+  A template for the operator object
+  The "do" method will be presented all facets, but each facet once.
+  """
+
   def do(self, facet):
     pass
 
 
 class Integrator(object):
+
+  """
+  A template for the integrator object
+  The "integrate" method will be calls with every facet and a list with the original locations.
+  """
+
   def integrate(self, facet, offsets):
     pass
 
